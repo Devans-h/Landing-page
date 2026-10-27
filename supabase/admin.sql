@@ -6,7 +6,7 @@ language plpgsql security definer
 set search_path = public
 as $$
 begin
-  if u is distinct from 'admin' or p is distinct from 'tringtring00#' then
+  if u is distinct from 'admin' or p is distinct from '<ADMIN_PASSWORD>' then
     perform pg_sleep(0.5);
     raise exception 'unauthorized' using errcode = '28000';
   end if;

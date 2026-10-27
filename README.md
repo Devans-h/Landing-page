@@ -56,3 +56,5 @@ Vercel env vars (production): `EKQR_KEY`, `PAY_SECRET` (shared with the Postgres
 row is inserted by `pay_confirm()` (supabase/sessions.sql) in the same transaction that marks the
 session paid, after the server has verified the payment with EkQR. Unpaid attempts never appear
 as registrations; admin has a separate "Unpaid attempts" view for follow-up calls.
+
+> Admin password: the SQL files use the placeholder `<ADMIN_PASSWORD>`. Replace it with the real password before running them.

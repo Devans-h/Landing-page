@@ -103,7 +103,7 @@ create or replace function public.admin_attempts(u text, p text)
 returns setof public.payment_sessions
 language plpgsql security definer set search_path = public as $$
 begin
-  if u is distinct from 'admin' or p is distinct from 'tringtring00#' then
+  if u is distinct from 'admin' or p is distinct from '<ADMIN_PASSWORD>' then
     perform pg_sleep(0.5);
     raise exception 'unauthorized' using errcode = '28000';
   end if;
@@ -115,7 +115,7 @@ create or replace function public.admin_registrations(u text, p text)
 returns setof public.webinar_registrations
 language plpgsql security definer set search_path = public as $$
 begin
-  if u is distinct from 'admin' or p is distinct from 'tringtring00#' then
+  if u is distinct from 'admin' or p is distinct from '<ADMIN_PASSWORD>' then
     perform pg_sleep(0.5);
     raise exception 'unauthorized' using errcode = '28000';
   end if;
