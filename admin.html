@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin | Webinar Registrations</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="assets/tringtring-mark.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
+  <style>
+    body { background: var(--sky-2); }
+    .admin-wrap { width: min(1240px, 100% - 32px); margin: 0 auto; padding: 32px 0 60px; }
+    .login { max-width: 420px; margin: 60px auto; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .toolbar h1 { font-size: 24px; color: var(--navy); }
+    .toolbar .count { color: var(--muted); font-weight: 600; font-size: 14px; margin-left: 10px; }
+    .toolbar .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .toolbar input[type=search] { padding: 10px 14px; border: 1.5px solid var(--line); border-radius: 10px; font: 500 14px var(--font); min-width: 220px; background: #fff; }
+    .toolbar .btn { padding: 10px 16px; font-size: 14px; }
+    .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 16px; }
+    .toolbar select { padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 10px; font: 600 14px var(--font); background: #fff; color: var(--navy); }
+    .badge.paid { background: #e7f8ee; color: #1f9d55; }
+    .badge.unpaid { background: #fff0f0; color: #c0262d; }
+    .mini { padding: 5px 10px; font-size: 12px; border-radius: 8px; }
+    .del { background: #fff; border: 1.5px solid #f3c4c7; color: #c0262d; }
+    .del:hover { background: #fff0f0; border-color: #c0262d; }
+    td .ref { display: block; color: var(--muted); font-size: 12px; margin-top: 3px; }
+    .stat { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+    .stat b { display: block; font-size: 26px; color: var(--navy); line-height: 1.1; }
+    .stat small { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+    .tablewrap { background: #fff; border: 1px solid var(--line); border-radius: 16px; overflow: auto; box-shadow: var(--shadow); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 900px; }
+    th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { background: var(--sky-2); color: var(--navy); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; position: sticky; top: 0; }
+    tr:last-child td { border-bottom: 0; }
+    td.num { color: var(--muted); }
+    td a { color: var(--blue); text-decoration: none; font-weight: 600; }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .badge.yes { background: #e7f8ee; color: #1f9d55; }
+    .badge.maybe { background: #fff6e0; color: #b7791f; }
+    .badge.no { background: #fff0f0; color: #c0262d; }
+    .empty { padding: 48px; text-align: center; color: var(--muted); }
+    @media (max-width: 700px) { .stats { grid-template-columns: 1fr 1fr; } .stats .stat:first-child { grid-column: 1 / -1; } .toolbar input[type=search] { min-width: 0; width: 100%; } }
+  </style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand-row" href="index.html" style="text-decoration:none">
+      <img src="assets/globalvox.png" alt="GlobalVox">
+      <span class="sep"></span>
+      <img class="brand-tt" src="assets/tringtring.png" alt="TringTring">
+      <span class="sep"></span>
+      <img src="assets/logbook360.png" alt="LogBook360">
+    </a>
+    <button class="btn btn-ghost" id="logoutBtn" style="display:none;padding:10px 18px;font-size:14px">Log out</button>
+  </div>
+</header>
+
+<main class="admin-wrap">
+  <section class="form-card login" id="loginCard">
+    <h2>Admin login</h2>
+    <p class="sub">Webinar registrations dashboard. A registration exists only once its payment is confirmed.</p>
+    <form id="loginForm">
+      <div class="field"><label for="u">Username</label><input id="u" name="u" type="text" autocomplete="username" required></div>
+      <div class="field"><label for="p">Password</label><input id="p" name="p" type="password" autocomplete="current-password" required></div>
+      <div class="form-error" id="loginError"></div>
+      <button class="btn btn-primary btn-block" type="submit" id="loginBtn">Sign in <svg><use href="#i-arrow"/></svg></button>
+    </form>
+  </section>
+
+  <section id="dash" style="display:none">
+    <div class="toolbar">
+      <div><h1 style="display:inline">Registrations <span class="count" id="count"></span></h1></div>
+      <div class="actions">
+        <select id="filter"><option value="paid">Registered (paid)</option><option value="attempts">Unpaid attempts (not registered)</option></select>
+        <input type="search" id="q" placeholder="Search name, company, email, phone…">
+        <button class="btn btn-ghost" id="refreshBtn">Refresh</button>
+        <button class="btn btn-primary" id="csvBtn">Download CSV</button>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="sTotal">0</b><small>Registered &middot; ₹<span id="sAmt">0</span> collected</small></div>
+      <div class="stat"><b id="sAttempts">0</b><small>Unpaid attempts</small></div>
+      <div class="stat"><b id="sYes">0</b><small>Attending</small></div>
+      <div class="stat"><b id="sMaybe">0</b><small>Maybe</small></div>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>#</th><th>Registered</th><th>Name</th><th>Company</th><th>Email</th><th>Phone</th><th>Payment</th><th>Attending</th><th>Source</th><th></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty" id="empty" style="display:none">Nothing here yet.</div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  var KEY = 'webinar-admin';
+  var rows = [], attempts = [];
+  var $ = function (id) { return document.getElementById(id); };
+
+  function creds() { try { return JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch (e) { return null; } }
+
+  async function load(c, fn) {
+    var res = await fetch(window.SUPABASE_URL + '/rest/v1/rpc/' + (fn || 'admin_registrations'), {
+      method: 'POST',
+      headers: { 'apikey': window.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + window.SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ u: c.u, p: c.p })
+    });
+    if (res.status === 403 || res.status === 401) throw new Error('auth');
+    if (!res.ok) throw new Error('http-' + res.status);
+    return res.json();
+  }
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function fmt(iso) { var d = new Date(iso); return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) + ' ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }); }
+  var label = { yes: 'Yes', maybe: 'Maybe', no: 'Recording' };
+  function payCell(r) {
+    if (r.paid) return '<span class="badge paid">Paid ₹' + (r.amount || '') + '</span>' + (r.upi_txn_id ? '<span class="ref">UPI ref ' + esc(r.upi_txn_id) + '</span>' : '');
+    return '<span class="badge unpaid">Not paid</span> <button class="btn btn-ghost mini" data-recheck="' + r.id + '" title="Ask EkQR for the latest status">Check</button>' + (r.status ? '<span class="ref">' + esc(r.status) + (r.error ? ' · ' + esc(r.error) : '') + '</span>' : '');
+  }
+
+  function render() {
+    var q = $('q').value.trim().toLowerCase();
+    var f = $('filter').value;
+    var src = f === 'attempts' ? attempts : rows;
+    var list = src.filter(function (r) { return !q || [r.name, r.company, r.email, r.phone, r.source, r.upi_txn_id].join(' ').toLowerCase().indexOf(q) > -1; });
+    $('rows').innerHTML = list.map(function (r, i) {
+      var tel = (r.phone || '').replace(/[^0-9]/g, '');
+      return '<tr><td class="num">' + (list.length - i) + '</td><td>' + fmt(r.paid_at || r.created_at) + '</td><td><b>' + esc(r.name) + '</b></td><td>' + esc(r.company) + '</td>' +
+        '<td><a href="mailto:' + esc(r.email) + '">' + esc(r.email) + '</a></td>' +
+        '<td><a href="https://wa.me/' + tel + '" target="_blank" rel="noopener">' + esc(r.phone) + '</a></td>' +
+        '<td>' + payCell(r) + '</td><td><span class="badge ' + esc(r.attending) + '">' + (label[r.attending] || esc(r.attending)) + '</span></td><td>' + esc(r.source || '–') + '</td>' +
+        '<td><button class="btn mini del" data-del="' + r.id + '" title="Delete permanently">Delete</button></td></tr>';
+    }).join('');
+    $('empty').style.display = list.length ? 'none' : 'block';
+    $('count').textContent = (q ? list.length + ' of ' + src.length : src.length) + (f === 'attempts' ? ' attempts' : ' registered');
+    $('sTotal').textContent = rows.length;
+    $('sAmt').textContent = rows.reduce(function (a, r) { return a + Number(r.amount || 0); }, 0);
+    $('sAttempts').textContent = attempts.length;
+    $('sYes').textContent = rows.filter(function (r) { return r.attending === 'yes'; }).length;
+    $('sMaybe').textContent = rows.filter(function (r) { return r.attending === 'maybe'; }).length;
+  }
+
+  async function show(c) {
+    var both = await Promise.all([load(c), load(c, 'admin_attempts')]);
+    rows = both[0]; attempts = both[1];
+    $('loginCard').style.display = 'none';
+    $('dash').style.display = 'block';
+    $('logoutBtn').style.display = 'inline-flex';
+    render();
+  }
+
+  $('loginForm').addEventListener('submit', async function (ev) {
+    ev.preventDefault();
+    var c = { u: $('u').value.trim(), p: $('p').value };
+    var err = $('loginError'); err.classList.remove('show');
+    $('loginBtn').disabled = true;
+    try {
+      await show(c);
+      sessionStorage.setItem(KEY, JSON.stringify(c));
+    } catch (e) {
+      err.textContent = e.message === 'auth' ? 'Wrong username or password.' : 'Could not load registrations (' + e.message + ').';
+      err.classList.add('show');
+    }
+    $('loginBtn').disabled = false;
+  });
+
+  $('logoutBtn').addEventListener('click', function () { sessionStorage.removeItem(KEY); location.reload(); });
+  $('refreshBtn').addEventListener('click', function () { var c = creds(); if (c) show(c); });
+  $('q').addEventListener('input', render);
+  $('filter').addEventListener('change', render);
+  async function del(kind, r) {
+    var c = creds(); if (!c) return;
+    var res = await fetch(window.SUPABASE_URL + '/rest/v1/rpc/admin_delete', {
+      method: 'POST',
+      headers: { 'apikey': window.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + window.SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ u: c.u, p: c.p, kind: kind, rid: r.id })
+    });
+    if (!res.ok) throw new Error('http-' + res.status);
+    return res.json();
+  }
+  $('rows').addEventListener('click', async function (ev) {
+    var d = ev.target.closest('[data-del]');
+    if (d) {
+      var isAttempt = $('filter').value === 'attempts';
+      var src = isAttempt ? attempts : rows;
+      var row = src.find(function (x) { return String(x.id) === d.dataset.del; }); if (!row) return;
+      var what = isAttempt ? 'this unpaid attempt' : 'the registration';
+      if (!confirm('Delete ' + what + ' for ' + row.name + ' (' + row.email + ')?\nThis cannot be undone' + (isAttempt ? '.' : ', and the same email/phone will be able to register again.'))) return;
+      d.disabled = true; d.textContent = '…';
+      try { await del(isAttempt ? 'attempt' : 'registration', row); } catch (e) { alert('Delete failed (' + e.message + ').'); }
+      var cc = creds(); if (cc) show(cc);
+      return;
+    }
+    var b = ev.target.closest('[data-recheck]'); if (!b) return;
+    var r = attempts.find(function (x) { return String(x.id) === b.dataset.recheck; }); if (!r) return;
+    b.disabled = true; b.textContent = '…';
+    try { await fetch('/api/status?ref=' + r.id + '&k=' + encodeURIComponent(r.token), { cache: 'no-store' }); } catch (e) {}
+    var c = creds(); if (c) show(c);
+  });
+  $('csvBtn').addEventListener('click', function () {
+    var head = ['Registered at', 'Name', 'Company', 'Email', 'Phone', 'Attending', 'Source', 'Amount', 'UPI ref'];
+    var csv = [head].concat(rows.map(function (r) { return [new Date(r.paid_at || r.created_at).toLocaleString('en-IN'), r.name, r.company, r.email, r.phone, label[r.attending] || r.attending, r.source || '', r.amount, r.upi_txn_id || '']; }))
+      .map(function (l) { return l.map(function (v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }).join(','); }).join('\n');
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv' }));
+    a.download = 'webinar-registrations.csv'; a.click();
+  });
+
+  var c = creds();
+  if (c) show(c).catch(function () { sessionStorage.removeItem(KEY); });
+})();
+</script>
+</body>
+</html>

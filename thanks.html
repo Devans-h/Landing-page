@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Payment Status | TringTring & LogBook360 Webinar</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="assets/tringtring-mark.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Caveat:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
+  <style>
+    .status-wrap { max-width: 520px; margin: 48px auto 80px; width: min(520px, 100% - 32px); }
+    .spinner { width: 56px; height: 56px; margin: 0 auto 18px; border-radius: 50%; border: 5px solid var(--sky); border-top-color: var(--blue); animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .pending { text-align: center; padding: 10px 0; }
+    .pending h2 { font-size: 26px; color: var(--navy); }
+    .pending p { color: var(--muted); margin-top: 10px; }
+    .pending .actions { display: grid; gap: 10px; margin-top: 22px; }
+  </style>
+</head>
+<body class="reg-page">
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 12 12 0 0 0 4.6 4c1.7.7 2.1.6 2.8.5.5 0 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.5-.3z"/></symbol>
+</svg>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand-row" href="index.html" style="text-decoration:none">
+      <img src="assets/globalvox.png" alt="GlobalVox">
+      <span class="sep"></span>
+      <img class="brand-tt" src="assets/tringtring.png" alt="TringTring">
+      <span class="sep"></span>
+      <img src="assets/logbook360.png" alt="LogBook360">
+    </a>
+  </div>
+</header>
+
+<main class="status-wrap">
+  <section class="form-card">
+    <div class="pending" id="pending">
+      <div class="spinner"></div>
+      <h2>Confirming your payment…</h2>
+      <p id="pendingMsg">This usually takes a few seconds. Please keep this page open.</p>
+      <div class="actions" id="pendingActions" style="display:none">
+        <a class="btn btn-primary btn-block" id="payAgain" href="register.html">Try the payment again</a>
+        <a class="btn btn-wa btn-block" id="waHelp" href="#" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg> I paid, but it's not showing</a>
+      </div>
+    </div>
+    <div class="success" id="success">
+      <div class="tick"><svg><use href="#i-check"/></svg></div>
+      <h2>Payment received. You're in, <span id="sName"></span>!</h2>
+      <p>Your seat is confirmed. The joining link and a reminder will reach your email and WhatsApp before the session.</p>
+      <div class="when"><span>Sat, 31 Oct 2026</span><span>11:00 AM IST &middot; Online</span></div>
+      <div class="actions">
+        <a class="btn btn-ghost btn-block" id="calLink" href="#" target="_blank" rel="noopener"><svg><use href="#i-cal"/></svg> Add to Google Calendar</a>
+        <a class="btn btn-wa btn-block" id="waLink" href="#" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg> Message us on WhatsApp</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  var E = window.EVENT;
+  // EkQR may rewrite the return URL, so gather what we can from the URL, then from the browser's saved registration.
+  var raw = location.search + location.hash;
+  var q = new URLSearchParams(raw.replace(/^[?#]/, '').replace(/[?#]/g, '&'));
+  var ref = (q.get('ref') || '').replace(/\D/g, ''), k = (q.get('k') || '').split(/[?&#]/)[0];
+  var txn = q.get('client_txn_id') || q.get('txn_id') || q.get('txn') || '';
+  try {
+    var saved = JSON.parse(sessionStorage.getItem('webinar-reg-v4') || 'null');
+    if (saved && saved.id && saved.token && !(ref && k)) { ref = String(saved.id); k = saved.token; }
+  } catch (e) {}
+  var $ = function (id) { return document.getElementById(id); };
+  var started = Date.now(), tries = 0;
+
+  function gcal() {
+    function f(iso) { return new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); }
+    return 'https://calendar.google.com/calendar/render?' + new URLSearchParams({ action: 'TEMPLATE', text: E.title, dates: f(E.startISO) + '/' + f(E.endISO), details: 'Live demo of TringTring and LogBook360. Joining link will be shared by email/WhatsApp. Contact: ' + E.whatsappLabel, location: 'Online' });
+  }
+  function showSuccess(name) {
+    $('sName').textContent = (name || '').split(' ')[0];
+    $('calLink').href = gcal();
+    $('waLink').href = 'https://wa.me/' + E.whatsapp + '?text=' + encodeURIComponent('Hi, I just registered and paid for the TringTring & LogBook360 webinar on 31 Oct. Name: ' + name);
+    $('pending').style.display = 'none';
+    $('success').classList.add('show');
+    try { sessionStorage.removeItem('webinar-reg-v4'); } catch (e) {}
+  }
+  function giveUp(msg) {
+    $('pendingMsg').textContent = msg;
+    document.querySelector('.spinner').style.display = 'none';
+    $('pendingActions').style.display = 'grid';
+    $('waHelp').href = 'https://wa.me/' + E.whatsapp + '?text=' + encodeURIComponent('Hi, I paid ₹' + (E.fee || 21) + ' for the webinar registration but the page did not confirm it. Registration ref: ' + ref + '. My UPI reference number is: ');
+  }
+  async function poll() {
+    tries++;
+    try {
+      var r = await fetch('/api/status?ref=' + encodeURIComponent(ref) + '&k=' + encodeURIComponent(k) + '&txn=' + encodeURIComponent(txn) + (tries === 1 ? '&raw=' + encodeURIComponent(raw.slice(0, 300)) : ''), { cache: 'no-store' });
+      var d = await r.json();
+      if (d.paid) return showSuccess(d.name);
+      if (d.error === 'not_found') return giveUp('We could not find this registration. Please register again.');
+      if (Date.now() - started > 90000) return giveUp('Your payment has not been confirmed yet. If you completed it, it may take a minute; if you cancelled, you can try again.');
+      if (d.status === 'failure' || d.status === 'failed') return giveUp('The payment did not go through. You can try again.');
+    } catch (e) { /* retry */ }
+    setTimeout(poll, tries < 10 ? 3000 : 6000);
+  }
+  if (!(ref && k) && !txn) giveUp('This link is incomplete. Please register again.'); else poll();
+})();
+</script>
+</body>
+</html>

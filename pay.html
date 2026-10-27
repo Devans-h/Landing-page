@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Pay | TringTring & LogBook360 Webinar</title>
+  <style>
+    html, body { margin: 0; background: #fff; min-height: 100%; }
+    body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #0b2451; text-align: center; padding: 20px; box-sizing: border-box; }
+    #qr { width: min(82vw, 82vh, 420px); height: min(82vw, 82vh, 420px); }
+    #qr img, #qr canvas { width: 100% !important; height: 100% !important; display: block; }
+    .amt { font-size: 22px; font-weight: 800; margin-top: 18px; }
+    .msg { color: #5b6b85; font-size: 14px; margin-top: 6px; }
+    a { color: #1a73e8; font-weight: 700; font-size: 14px; margin-top: 22px; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div id="qr"></div>
+  <div class="amt">₹<span id="amt"></span></div>
+  <div class="msg" id="msg">Scan with any UPI app</div>
+  <a id="back" href="register">&larr; Back</a>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+  (function () {
+    var q = new URLSearchParams(location.search), h = new URLSearchParams(location.hash.slice(1));
+    var saved = null; try { saved = JSON.parse(sessionStorage.getItem('webinar-reg-v4') || 'null'); } catch (e) {}
+    var ref = q.get('ref') || (saved && saved.id), k = q.get('k') || (saved && saved.token);
+    var upi = h.get('u') || (saved && saved.qr), amt = h.get('a') || (saved && saved.amount) || '';
+    document.getElementById('amt').textContent = amt;
+    if (!upi) { document.getElementById('msg').textContent = 'This payment link has expired. Please go back and start again.'; return; }
+    new QRCode(document.getElementById('qr'), { text: upi, width: 420, height: 420, correctLevel: QRCode.CorrectLevel.M });
+    if (!ref || !k) return;
+    setInterval(function () {
+      fetch('/api/status?ref=' + ref + '&k=' + encodeURIComponent(k), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
+        if (d && d.paid) location.replace('thanks?ref=' + ref + '&k=' + encodeURIComponent(k));
+      }).catch(function () {});
+    }, 3000);
+  })();
+  </script>
+</body>
+</html>

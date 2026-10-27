@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reserve Your Spot | TringTring & LogBook360 Webinar</title>
+  <meta name="description" content="Register for the live webinar: Earn with AI Powered Applications, with TringTring and LogBook360. Sat 31 Oct, 11:00 AM IST. ₹21 registration via UPI.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="assets/tringtring-mark.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Caveat:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    /* Stepper */
+    .stepper { display: flex; align-items: center; gap: 6px; margin-bottom: 20px; }
+    .stepper .st { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .02em; white-space: nowrap; }
+    .stepper .st i { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 12px; background: var(--sky-2); border: 1.5px solid var(--line); color: var(--muted); }
+    .stepper .st.on { color: var(--navy); }
+    .stepper .st.on i { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .stepper .st.done i { background: #e7f8ee; border-color: #bfe8cf; color: #1f9d55; }
+    .stepper .st.done i svg { width: 13px; height: 13px; }
+    .stepper .bar { flex: 1; height: 2px; background: var(--line); border-radius: 2px; min-width: 10px; }
+    .stepper .bar.on { background: var(--blue); }
+    /* Step 2 */
+    .summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--sky-2); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-top: 16px; font-size: 14px; }
+    .summary b { color: var(--navy); display: block; }
+    .summary span { color: var(--muted); font-size: 13px; display: block; word-break: break-all; }
+    .summary button { background: none; border: 0; color: var(--blue); font: 700 13px var(--font); cursor: pointer; padding: 6px 8px; white-space: nowrap; }
+    .paycard { margin-top: 18px; border: 1.5px solid var(--line); border-radius: 16px; overflow: hidden; }
+    .paycard .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; background: linear-gradient(135deg, #0b2451, #143a7a); color: #fff; }
+    .paycard .head small { display: block; color: #bfd8f7; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+    .paycard .head b { font-size: 28px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+    .paycard .head .lock { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #cfe4fb; font-weight: 600; }
+    .paycard .head .lock svg { width: 16px; height: 16px; }
+    .paycard .body { padding: 16px; }
+    .qrbox { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .qrbox .qr { background: #fff; padding: 8px; border-radius: 12px; border: 1px solid var(--line); }
+    .qrbox .qr img, .qrbox .qr canvas { display: block; }
+    .qrbox p { font-size: 13px; color: var(--muted); text-align: center; }
+    .qrbox b { color: var(--navy); }
+    .or { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; margin: 16px 0 10px; }
+    .or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+    .paybtns { display: grid; gap: 8px; }
+    .paybtns > .btn:not(.btn-primary) { justify-content: flex-start; padding: 12px 14px; border: 1.5px solid var(--line); background: #fff; color: var(--navy); font-size: 15px; }
+    .paybtns > .btn:not(.btn-primary):hover { border-color: var(--blue); }
+    .paybtns > .btn .app { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; font-weight: 800; font-size: 12px; color: #fff; }
+    .paybtns > .btn .chev { margin-left: auto; color: var(--muted); }
+    .waiting { display: flex; align-items: center; gap: 10px; justify-content: center; margin-top: 16px; color: var(--navy); font-size: 14px; font-weight: 700; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--blue); animation: pulse 1.2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity: .25; transform: scale(.8); } 50% { opacity: 1; transform: scale(1.1); } }
+    .payhelp { margin-top: 10px; font-size: 13px; color: var(--muted); text-align: center; }
+    .payhelp a { color: var(--blue); font-weight: 700; }
+    .note { font-size: 13px; color: var(--muted); text-align: center; margin-top: 12px; }
+    .steps { counter-reset: st; list-style: none; width: 100%; display: grid; gap: 10px; margin-top: 6px; padding: 0; }
+    .steps li { counter-increment: st; display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: start; font-size: 14px; color: var(--muted); line-height: 1.45; text-align: left; }
+    .steps li::before { content: counter(st); width: 28px; height: 28px; border-radius: 50%; background: #e8f1fd; color: var(--blue); font-weight: 800; font-size: 13px; display: grid; place-items: center; }
+    .steps b { color: var(--navy); }
+    .paybtns > .btn.active { border-color: var(--blue); background: #f3f8fe; }
+    .appguide { display: none; }
+    .appguide.show { display: grid; gap: 12px; margin-top: 4px; padding: 14px; border: 1.5px solid #cfe4fb; background: #f7fbff; border-radius: 14px; }
+    .appguide .saved { display: flex; align-items: center; gap: 8px; color: #1b7f4b; font-weight: 800; font-size: 14px; }
+    .appguide .saved svg { width: 18px; height: 18px; }
+    .linkbtn { background: none; border: 0; color: var(--blue); font: 700 13px var(--font); cursor: pointer; text-decoration: underline; }
+    /* Layout: hero + benefits on the left, form on the right (desktop) */
+    .reg-grid { grid-template-rows: auto 1fr; }
+    .reg-side { grid-column: 1; grid-row: 1; }
+    .reg-benefits { grid-column: 1; grid-row: 2; }
+    .form-card { grid-column: 2; grid-row: 1 / span 2; }
+    .reg-benefits h3 { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+    .reg-benefits ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+    .reg-benefits li { display: flex; gap: 12px; align-items: flex-start; font-weight: 600; color: var(--ink); }
+    .reg-benefits .seats { text-align: left; margin-top: 18px; }
+    .reg-side .when { margin-top: 24px; }
+    @media (max-width: 980px) {
+      .reg-grid { grid-template-rows: auto; gap: 20px; padding: 20px 0 60px; }
+      .reg-side, .reg-benefits, .form-card { grid-column: 1; grid-row: auto; }
+      .reg-side { order: 1; } .form-card { order: 2; } .reg-benefits { order: 3; }
+      .reg-side .eyebrow { font-size: 11px; padding: 6px 12px; }
+      .reg-side h1 { font-size: 30px; margin-top: 12px; }
+      .reg-side .lead { font-size: 15px; margin-top: 8px; }
+      .reg-side .when { margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 0; background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); }
+      .reg-side .when span { padding: 12px 14px; font-size: 14px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .reg-side .when span:nth-child(2n) { border-right: 0; }
+      .reg-side .when span:nth-child(3) { grid-column: 1 / -1; border-bottom: 0; justify-content: center; }
+      .reg-benefits { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 20px; box-shadow: var(--shadow); }
+      .reg-benefits ul { grid-template-columns: 1fr 1fr; gap: 12px 14px; }
+      .reg-benefits li { flex-direction: column; gap: 8px; font-size: 14px; font-weight: 600; line-height: 1.35; }
+      .reg-benefits .check { width: 28px; height: 28px; }
+      .reg-benefits .seats { text-align: center; margin-top: 16px; font-size: 20px; }
+    }
+    @media (max-width: 400px) { .reg-benefits ul { grid-template-columns: 1fr; } .reg-benefits li { flex-direction: row; } }
+  </style>
+</head>
+<body class="reg-page">
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 10l5-3v10l-5-3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 12 12 0 0 0 4.6 4c1.7.7 2.1.6 2.8.5.5 0 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.5-.3z"/></symbol>
+</svg>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand-row" href="index.html" style="text-decoration:none">
+      <img src="assets/globalvox.png" alt="GlobalVox">
+      <span class="sep"></span>
+      <img class="brand-tt" src="assets/tringtring.png" alt="TringTring">
+      <span class="sep"></span>
+      <img src="assets/logbook360.png" alt="LogBook360">
+    </a>
+    <a class="btn btn-ghost" href="index.html" style="padding:10px 18px;font-size:14px">&larr; Back</a>
+  </div>
+</header>
+
+<main class="wrap reg-grid">
+  <section class="reg-side">
+    <span class="eyebrow"><svg><use href="#i-cal"/></svg> Exclusive Live Webinar</span>
+    <h1>Reserve your seat <span>for just ₹21.</span></h1>
+    <p class="lead">Pay ₹21 by UPI and your seat is locked. See TringTring and LogBook360 live, and learn how to earn recurring income with zero investment.</p>
+    <div class="when">
+      <span><svg><use href="#i-cal"/></svg> Sat, 31 Oct 2026</span>
+      <span><svg><use href="#i-clock"/></svg> 11:00 AM IST</span>
+      <span><svg><use href="#i-video"/></svg> Online &middot; ₹21</span>
+    </div>
+  </section>
+
+  <section class="reg-benefits">
+    <h3>What you get</h3>
+    <ul>
+      <li><span class="check"><svg><use href="#i-check"/></svg></span><span>Live demo of the AI calling agent and visitor management system</span></li>
+      <li><span class="check"><svg><use href="#i-check"/></svg></span><span>Real use cases and the complete earning model</span></li>
+      <li><span class="check"><svg><use href="#i-check"/></svg></span><span>Live Q&amp;A with the GlobalVox team</span></li>
+    </ul>
+    <div class="seats">Limited seats. Don't miss this opportunity!</div>
+  </section>
+
+  <section class="form-card">
+    <div class="stepper" id="stepper">
+      <div class="st on" data-step="1"><i>1</i>Details</div><div class="bar"></div>
+      <div class="st" data-step="2"><i>2</i>Payment</div><div class="bar"></div>
+      <div class="st" data-step="3"><i>3</i>Confirmed</div>
+    </div>
+
+    <!-- STEP 1: details -->
+    <div id="formWrap">
+      <h2>Your details</h2>
+      <p class="sub">Takes 30 seconds. Your seat is reserved the moment your ₹21 UPI payment lands.</p>
+      <form id="regForm" novalidate>
+        <div class="field">
+          <label for="name">Full name</label>
+          <input id="name" name="name" type="text" autocomplete="name" placeholder="e.g. Rahul Sharma" required minlength="2">
+        </div>
+        <div class="field">
+          <label for="company">Business / company name</label>
+          <input id="company" name="company" type="text" autocomplete="organization" placeholder="e.g. Sharma Enterprises" required minlength="2">
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" placeholder="you@company.com" required>
+        </div>
+        <div class="field">
+          <label for="phone">Phone / WhatsApp number</label>
+          <div class="phone-row">
+            <div class="cc">+91</div>
+            <input id="phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="98765 43210" required pattern="[0-9 ]{10,13}">
+          </div>
+        </div>
+        <div class="field">
+          <label>Will you attend the live session?</label>
+          <div class="attend">
+            <input type="radio" name="attending" id="a-yes" value="yes" checked><label for="a-yes">Yes, count me in</label>
+            <input type="radio" name="attending" id="a-maybe" value="maybe"><label for="a-maybe">Maybe</label>
+          </div>
+        </div>
+        <div class="form-error" id="formError"></div>
+        <button class="btn btn-primary btn-block" type="submit" id="submitBtn">Continue to payment <svg><use href="#i-arrow"/></svg></button>
+        <p class="fine">₹21 registration, paid securely via UPI. We only use your details to send webinar updates.</p>
+      </form>
+    </div>
+
+    <!-- STEP 2: pay -->
+    <div id="payStep" style="display:none">
+      <h2>Complete your payment</h2>
+      <p class="sub">Your seat is held for a few minutes. Pay ₹<span id="pAmountH">21</span> to confirm it.</p>
+      <div class="summary">
+        <div><b id="pName"></b><span id="pEmail"></span></div>
+        <button type="button" id="editBtn">Edit</button>
+      </div>
+      <div class="paycard">
+        <div class="head">
+          <div><small>Registration fee</small><b>₹<span id="pAmount">21</span></b></div>
+          <div class="lock"><svg><use href="#i-lock"/></svg> Secure UPI payment</div>
+        </div>
+        <div class="body">
+          <div id="qrWrap"></div>
+          <div class="paybtns" id="payBtns"></div>
+        </div>
+      </div>
+      <div class="waiting"><span class="dot"></span> Waiting for your payment…</div>
+      <p class="payhelp">The page confirms by itself within seconds of paying. Problem? <a id="payWa" href="#" target="_blank" rel="noopener">WhatsApp us</a>.</p>
+    </div>
+
+    <!-- Payment could not be started -->
+    <div id="payFail" style="display:none" class="success show">
+      <h2>We couldn't start the payment</h2>
+      <p id="fMsg">Our payment service is not responding right now, so your registration is not complete yet. Try again in a minute, or message us and we'll register you manually.</p>
+      <div class="actions">
+        <a class="btn btn-primary btn-block" href="register.html">Try again</a>
+        <a class="btn btn-wa btn-block" id="fWa" href="#" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg> Register on WhatsApp</a>
+      </div>
+    </div>
+
+    <!-- Done -->
+    <div class="success" id="success">
+      <div class="tick"><svg><use href="#i-check"/></svg></div>
+      <h2 id="sTitle">Payment received. You're in, <span id="sName"></span>!</h2>
+      <p id="sMsg">Your seat is confirmed. The joining link and a reminder will reach your email and WhatsApp before the session.</p>
+      <div class="when">
+        <span>Sat, 31 Oct 2026</span>
+        <span>11:00 AM IST &middot; Online</span>
+      </div>
+      <div class="actions">
+        <a class="btn btn-ghost btn-block" id="calLink" href="#" target="_blank" rel="noopener"><svg><use href="#i-cal"/></svg> Add to Google Calendar</a>
+        <a class="btn btn-wa btn-block" id="waLink" href="#" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg> Message us on WhatsApp</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  var E = window.EVENT;
+  var $ = function (id) { return document.getElementById(id); };
+  var form = $('regForm'), btn = $('submitBtn'), err = $('formError');
+  var STORE = 'webinar-reg-v4';
+  var reg = null, pollTimer = null;
+  var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) && !(window.innerWidth >= 900 && window.matchMedia('(pointer: fine)').matches);
+
+  function showError(msg) { err.textContent = msg; err.classList.add('show'); }
+  function show(id) { ['formWrap', 'payStep', 'payFail'].forEach(function (x) { $(x).style.display = x === id ? 'block' : 'none'; }); }
+  function setStep(n) {
+    document.querySelectorAll('#stepper .st').forEach(function (el) {
+      var s = Number(el.dataset.step);
+      el.classList.toggle('on', s === n);
+      el.classList.toggle('done', s < n);
+      el.querySelector('i').innerHTML = s < n ? '<svg><use href="#i-check"/></svg>' : String(s);
+    });
+    document.querySelectorAll('#stepper .bar').forEach(function (b, i) { b.classList.toggle('on', i + 1 < n); });
+  }
+  function gcalLink() {
+    function fmt(iso) { return new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); }
+    return 'https://calendar.google.com/calendar/render?' + new URLSearchParams({ action: 'TEMPLATE', text: E.title, dates: fmt(E.startISO) + '/' + fmt(E.endISO), details: 'Live demo of TringTring (AI calling agent) and LogBook360 (smart visitor management). Joining link will be shared by email/WhatsApp. Contact: ' + E.whatsappLabel, location: 'Online' });
+  }
+  function wa(text) { return 'https://wa.me/' + E.whatsapp + '?text=' + encodeURIComponent(text); }
+
+  function showSuccess(name, already, by) {
+    clearTimeout(pollTimer);
+    var first = (name || '').split(' ')[0];
+    if (already) {
+      $('sTitle').textContent = 'You are already registered, ' + first + '!';
+      $('sMsg').textContent = 'This ' + (by === 'phone' ? 'phone number' : 'email') + ' already has a confirmed seat, so there is nothing more to pay. The joining link will reach your email and WhatsApp before the session.';
+    } else {
+      $('sName').textContent = first;
+    }
+    $('calLink').href = gcalLink();
+    $('waLink').href = wa('Hi, I registered and paid for the TringTring & LogBook360 webinar on 31 Oct. Name: ' + name);
+    show(null);
+    setStep(3);
+    $('success').classList.add('show');
+    try { sessionStorage.removeItem(STORE); } catch (e) {}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showPay(r) {
+    reg = r;
+    $('pName').textContent = r.name || '';
+    $('pEmail').textContent = r.email || '';
+    $('pAmount').textContent = r.amount || E.fee;
+    $('pAmountH').textContent = r.amount || E.fee;
+    var html = '', qrHtml = '';
+    if (isMobile) {
+      var amt = r.amount || E.fee;
+      qrHtml = '<div class="qrbox"><div class="qr" id="qrCanvas"></div>' +
+               '<p><b>Scan with GPay, PhonePe, Paytm or any UPI app</b> to pay ₹' + amt + '. This page updates by itself once the payment lands.</p></div>';
+      html = '<button type="button" class="btn btn-primary btn-block" id="payBtn">Pay ₹' + amt + ' <svg><use href="#i-arrow"/></svg></button>' +
+             '';
+    } else {
+      qrHtml = '<div class="qrbox"><div class="qr" id="qrCanvas"></div><p><b>Scan with GPay, PhonePe, Paytm or any UPI app</b> to pay ₹' + (r.amount || E.fee) + '. This page updates by itself once the payment lands.</p></div>';
+    }
+    $('payBtns').innerHTML = html;
+    $('qrWrap').innerHTML = qrHtml;
+    try { if (window.QRCode && r.qr) new QRCode($('qrCanvas'), { text: r.qr, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M }); } catch (e) { $('qrWrap').innerHTML = ''; }
+    var pb = $('payBtn');
+    if (pb) pb.addEventListener('click', function () { location.href = 'pay?ref=' + r.id + '&k=' + encodeURIComponent(r.token) + '#u=' + encodeURIComponent(r.qr) + '&a=' + (r.amount || E.fee); });
+    $('payWa').href = wa('Hi, I am trying to pay ₹' + (r.amount || E.fee) + ' for the webinar registration but facing an issue. Ref: ' + r.id);
+    show('payStep');
+    setStep(2);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    poll();
+  }
+  function showFail(r, msg) {
+    if (msg) $('fMsg').textContent = msg;
+    $('fWa').href = wa('Hi, I want to register for the webinar on 31 Oct but the online payment did not start.\nName: ' + r.name + '\nCompany: ' + (r.company || '') + '\nEmail: ' + (r.email || '') + '\nPhone: ' + (r.phone || ''));
+    show('payFail');
+    setStep(2);
+  }
+
+  async function poll() {
+    if (!reg) return;
+    try {
+      var r = await fetch('/api/status?ref=' + reg.id + '&k=' + encodeURIComponent(reg.token), { cache: 'no-store' });
+      var d = await r.json();
+      if (d.paid) return showSuccess(d.name || reg.name);
+    } catch (e) { /* keep trying */ }
+    pollTimer = setTimeout(poll, document.hidden ? 8000 : 3000);
+  }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && reg) { clearTimeout(pollTimer); poll(); } });
+
+  $('editBtn').addEventListener('click', function () {
+    clearTimeout(pollTimer); reg = null;
+    try { sessionStorage.removeItem(STORE); } catch (e) {}
+    btn.disabled = false; btn.innerHTML = 'Continue to payment <svg><use href="#i-arrow"/></svg>';
+    show('formWrap'); setStep(1);
+  });
+
+  form.addEventListener('submit', async function (ev) {
+    ev.preventDefault();
+    err.classList.remove('show');
+    if (!form.checkValidity()) {
+      var bad = form.querySelector('input:invalid');
+      if (bad) bad.focus();
+      showError(bad && bad.id === 'phone' ? 'Please enter a valid 10-digit mobile number.' :
+                bad && bad.id === 'email' ? 'Please enter a valid email address.' : 'Please fill in all the fields.');
+      return;
+    }
+    var data = {
+      name: form.name.value.trim(), company: form.company.value.trim(),
+      email: form.email.value.trim().toLowerCase(), phone: '+91 ' + form.phone.value.replace(/\s+/g, ''),
+      attending: form.attending.value, source: new URLSearchParams(location.search).get('src') || null
+    };
+    btn.disabled = true; btn.textContent = 'Preparing your payment…';
+    try {
+      var res = await fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      var r = await res.json();
+      if (!res.ok || r.error === 'invalid' || r.error === 'server') throw new Error(r.message || 'Could not start registration');
+      r.name = r.name || data.name; r.email = data.email; r.company = data.company; r.phone = data.phone;
+      if (r.paid) return showSuccess(r.name, r.already, r.by);
+      if (r.error === 'payment_unavailable') return showFail(r);
+      r.at = Date.now();
+      try { sessionStorage.setItem(STORE, JSON.stringify(r)); } catch (e) {}
+      showPay(r);
+    } catch (e) {
+      btn.disabled = false; btn.innerHTML = 'Continue to payment <svg><use href="#i-arrow"/></svg>';
+      showError((e.message || 'Something went wrong.') + ' ');
+      var a = document.createElement('a'); a.href = wa('Webinar registration (31 Oct, 11 AM):\nName: ' + data.name + '\nCompany: ' + data.company + '\nEmail: ' + data.email + '\nPhone: ' + data.phone);
+      a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Register on WhatsApp instead.'; a.style.fontWeight = '700';
+      err.appendChild(a);
+    }
+  });
+
+  // Came back mid-payment in the same tab? Resume step 2 with the same order.
+  try {
+    var saved = JSON.parse(sessionStorage.getItem(STORE) || 'null');
+    if (saved && saved.id && saved.token && saved.payment_url && saved.qr && Date.now() - (saved.at || 0) < 20 * 60 * 1000) showPay(saved); else sessionStorage.removeItem(STORE);
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>

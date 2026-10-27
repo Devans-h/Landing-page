@@ -1,0 +1,6 @@
+.vercel
+.env
+.env.*
+node_modules
+_seed*.html
+_harness.html
