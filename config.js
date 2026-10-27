@@ -1,8 +1,4 @@
-// Where registrations are stored. Supabase project "Webinar" (ref yinpxfkjbbhwvakgpxou).
-// Run supabase/schema.sql once in the Supabase SQL editor to create the table.
-window.SUPABASE_URL = "https://yinpxfkjbbhwvakgpxou.supabase.co";
-window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlpbnB4ZmtqYmJod3Zha2dweG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI5NDA2MDUsImV4cCI6MjEwODUxNjYwNX0.Yn78zsImYZJWP-BP1Q4BLUL6H9jea8DAc8e2-PYJ6Cc";
-window.REG_TABLE = "webinar_registrations";
+// Database settings live on the server (see .env.example); nothing here.
 
 // Event details used across both pages.
 window.EVENT = {

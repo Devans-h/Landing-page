@@ -1,0 +1,8 @@
+{
+  "name": "webinar-landing",
+  "private": true,
+  "description": "Webinar landing page with paid UPI registration (EkQR) and admin.",
+  "dependencies": {
+    "pg": "^8.13.1"
+  }
+}

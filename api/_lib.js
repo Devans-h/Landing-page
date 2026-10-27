@@ -13,25 +13,16 @@ const env = {
 };
 
 function assertEnv() {
-  for (const k of ['EKQR_KEY', 'PAY_SECRET', 'SUPABASE_URL', 'SUPABASE_ANON_KEY']) {
+  for (const k of ['EKQR_KEY', 'PAY_SECRET']) {
     if (!env[k]) throw new Error('missing env ' + k);
   }
+  db.assertDbEnv();
 }
 
-// Call a Postgres function through PostgREST. Every function checks PAY_SECRET itself.
+// Call a database function (see api/_db.js for the backend selection). Every function checks PAY_SECRET itself.
+const db = require('./_db');
 async function rpc(fn, params) {
-  const res = await fetch(env.SUPABASE_URL + '/rest/v1/rpc/' + fn, {
-    method: 'POST',
-    headers: {
-      apikey: env.SUPABASE_ANON_KEY,
-      Authorization: 'Bearer ' + env.SUPABASE_ANON_KEY,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ secret: env.PAY_SECRET, ...params }),
-  });
-  const text = await res.text();
-  if (!res.ok) throw new Error('rpc ' + fn + ' ' + res.status + ' ' + text.slice(0, 200));
-  return text ? JSON.parse(text) : null;
+  return db.call(fn, { secret: env.PAY_SECRET, ...params });
 }
 
 async function ekqr(path, body) {

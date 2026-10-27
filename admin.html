@@ -112,16 +112,13 @@
 
   function creds() { try { return JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch (e) { return null; } }
 
-  async function load(c, fn) {
-    var res = await fetch(window.SUPABASE_URL + '/rest/v1/rpc/' + (fn || 'admin_registrations'), {
-      method: 'POST',
-      headers: { 'apikey': window.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + window.SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ u: c.u, p: c.p })
-    });
-    if (res.status === 403 || res.status === 401) throw new Error('auth');
+  async function api(body) {
+    var res = await fetch('/api/admin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), cache: 'no-store' });
+    if (res.status === 401 || res.status === 403) throw new Error('auth');
     if (!res.ok) throw new Error('http-' + res.status);
     return res.json();
   }
+  function load(c, fn) { return api({ u: c.u, p: c.p, action: fn === 'admin_attempts' ? 'attempts' : 'registrations' }); }
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function fmt(iso) { var d = new Date(iso); return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) + ' ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }); }
@@ -181,16 +178,7 @@
   $('refreshBtn').addEventListener('click', function () { var c = creds(); if (c) show(c); });
   $('q').addEventListener('input', render);
   $('filter').addEventListener('change', render);
-  async function del(kind, r) {
-    var c = creds(); if (!c) return;
-    var res = await fetch(window.SUPABASE_URL + '/rest/v1/rpc/admin_delete', {
-      method: 'POST',
-      headers: { 'apikey': window.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + window.SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ u: c.u, p: c.p, kind: kind, rid: r.id })
-    });
-    if (!res.ok) throw new Error('http-' + res.status);
-    return res.json();
-  }
+  function del(kind, r) { var c = creds(); if (!c) return; return api({ u: c.u, p: c.p, action: 'delete', kind: kind, rid: r.id }); }
   $('rows').addEventListener('click', async function (ev) {
     var d = ev.target.closest('[data-del]');
     if (d) {

@@ -58,3 +58,21 @@ session paid, after the server has verified the payment with EkQR. Unpaid attemp
 as registrations; admin has a separate "Unpaid attempts" view for follow-up calls.
 
 > Admin password: the SQL files use the placeholder `<ADMIN_PASSWORD>`. Replace it with the real password before running them.
+
+
+## Database: any PostgreSQL
+
+The site needs one PostgreSQL database. Two ways to connect:
+
+1. **Direct (any Postgres: Neon, Railway, RDS, your own server)**  
+   Run `db/schema.sql` once on the database after replacing `__PAY_SECRET__` and `__ADMIN_PASSWORD__`
+   (for example `psql "$DATABASE_URL" -f db/schema.sql`), then set `DATABASE_URL` on the deployment.
+2. **Supabase**  
+   Paste the same `db/schema.sql` into the SQL editor and set `SUPABASE_URL` + `SUPABASE_ANON_KEY` instead.
+   `DATABASE_URL` wins when both are present.
+
+All environment variables are listed in `.env.example`. The older per-feature files in `supabase/` are
+kept for history only; `db/schema.sql` is the complete, current schema.
+
+The admin page calls `/api/admin` (server side), so it works with either backend and the browser never
+holds database credentials.
